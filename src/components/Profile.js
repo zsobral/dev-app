@@ -12,6 +12,7 @@ const GET_PROFILE = gql`
       id
       username
       fullName
+      avatar
     }
   }
 `;
@@ -19,7 +20,7 @@ const GET_PROFILE = gql`
 export const useProfile = () => useContext(ProfileContext);
 
 export const ProfileProvider = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { data, loading, error } = useQuery(GET_PROFILE, {
     skip: !isAuthenticated,
   });
@@ -29,7 +30,7 @@ export const ProfileProvider = ({ children }) => {
   }
 
   if (!loading && data?.myProfile === null) {
-    return <ProfileForm />;
+    return <ProfileForm accountId={user.sub} />;
   }
 
   return (

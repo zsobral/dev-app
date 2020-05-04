@@ -4,9 +4,14 @@ import { gql, useMutation } from "@apollo/client";
 import { Input } from "./Input";
 
 const CREATE_PROFILE = gql`
-  mutation($username: String!, $fullName: String) {
-    createProfile(username: $username, fullName: $fullName) {
+  mutation($username: String!, $fullName: String, $accountId: ID!) {
+    createProfile(
+      username: $username
+      fullName: $fullName
+      accountId: $accountId
+    ) {
       id
+      avatar
       username
       fullName
     }
@@ -15,7 +20,7 @@ const CREATE_PROFILE = gql`
 
 const initialValues = { username: "", fullName: "" };
 
-export const ProfileForm = () => {
+export const ProfileForm = ({ accountId }) => {
   const [state, setState] = useState(initialValues);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createProfile] = useMutation(CREATE_PROFILE);
@@ -24,7 +29,11 @@ export const ProfileForm = () => {
     event.preventDefault();
     setIsSubmitting(true);
     await createProfile({
-      variables: { username: state.username, fullName: state.fullName },
+      variables: {
+        username: state.username,
+        fullName: state.fullName,
+        accountId,
+      },
     });
     setIsSubmitting(false);
   };

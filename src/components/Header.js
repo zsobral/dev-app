@@ -5,8 +5,10 @@ import { styled } from "./Styletron";
 import { Container } from "./Container";
 import { Button } from "./Button";
 import { useAuth } from "./Auth";
-import { Github } from "./Icon";
 import { path as newPostPagePath } from "../pages/NewPostPage";
+import { useProfile } from "./Profile";
+import { Avatar } from "./Avatar";
+import { Menu, MenuItem, MenuDivider } from "./Menu";
 
 const StyledHeader = styled("header", ({ $theme }) => ({
   backgroundColor: $theme.colors.headerBackground,
@@ -30,28 +32,65 @@ const StyledNavItems = styled("div", {
   alignItems: "center",
 });
 
-const StyledBrand = styled("div", {
+const StyledBrand = styled("a", {
   fontSize: "24px",
   fontWeight: "900",
+  color: "inherit",
+  textDecoration: "none",
 });
 
 export const Header = () => {
   const { isAuthenticated, login, logout } = useAuth();
+  const profile = useProfile();
 
   return (
     <StyledHeader>
       <Container>
         <StyledNav>
-          <StyledBrand>DEV</StyledBrand>
+          <StyledBrand $as={Link} to="/">
+            DEV
+          </StyledBrand>
           <StyledNavItems>
-            <Github style={{ marginRight: '8px' }} />
-            {isAuthenticated && (
-              <Button $as={Link} to={newPostPagePath} $style={{ marginRight: '8px' }}>
-                New post
-              </Button>
-            )}
             {isAuthenticated ? (
-              <Button onClick={logout}>Logout</Button>
+              <>
+                <Button
+                  $as={Link}
+                  to={newPostPagePath}
+                  $style={({ $theme }) => ({
+                    marginRight: $theme.sizings.scale2,
+                  })}
+                >
+                  New post
+                </Button>
+                <Menu element={<Avatar src={profile?.avatar} />}>
+                  {({ close }) => (
+                    <>
+                      <div style={{ width: "150px" }}>
+                        <div>{profile.fullName}</div>
+                        <div style={{ color: "rgba(0,0,0,.5)" }}>
+                          <small>@{profile.username}</small>
+                        </div>
+                      </div>
+                      <MenuDivider />
+                      <MenuItem
+                        onClick={() => {
+                          close();
+                        }}
+                      >
+                        Settings
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          logout();
+                          close();
+                        }}
+                      >
+                        Logout
+                      </MenuItem>
+                    </>
+                  )}
+                </Menu>
+              </>
             ) : (
               <Button onClick={login}>Login</Button>
             )}

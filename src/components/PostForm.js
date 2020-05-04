@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
 
 import { GET_POSTS } from "./Posts";
@@ -40,6 +41,7 @@ const StyledFormFooter = styled("div", {
 
 export const PostForm = () => {
   const profile = useProfile();
+  const navigate = useNavigate();
   const [isPreview, setIsPreview] = useState(false);
   const [values, setValues] = useState(initialValues);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -61,6 +63,7 @@ export const PostForm = () => {
     });
     setValues(initialValues);
     setIsSubmitting(false);
+    navigate("/");
   };
 
   const handleChange = (event) => {
@@ -88,7 +91,11 @@ export const PostForm = () => {
       )}
 
       <StyledFormFooter>
-        <Button type="button" onClick={() => setIsPreview(!isPreview)} style={{ marginRight: '8px' }}>
+        <Button
+          type="button"
+          onClick={() => setIsPreview(!isPreview)}
+          style={{ marginRight: "8px" }}
+        >
           Preview
         </Button>
         <Button type="submit" disabled={isSubmitting}>

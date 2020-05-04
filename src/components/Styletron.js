@@ -18,6 +18,7 @@ const THEME = {
   shadows: {
     header: "0px 1px 1px rgba(0, 0, 0, 0.1)",
     card: "rgba(0, 0, 0, 0.1) 1px 1px 3px",
+    menu: "rgba(0, 0, 0, 0.1) 1px 1px 3px, rgba(0, 0, 0, 0.1) -1px -1px 3px",
   },
   sizings: {
     scale1: "8px",
@@ -27,6 +28,8 @@ const THEME = {
   radius: {
     button: "4px",
     card: "4px",
+    menuItem: "3px",
+    menu: "4px",
   },
 };
 
