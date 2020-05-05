@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import { styled } from "./Styletron";
 
@@ -52,7 +52,7 @@ export { StyledMenuItem as MenuItem, StyledDivider as MenuDivider };
 
 export const Menu = ({ element, children }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const close = () => setIsOpen(false);
+  const close = useCallback(() => setIsOpen(false), []);
 
   useEffect(() => {
     window.addEventListener("click", close);

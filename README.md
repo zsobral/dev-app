@@ -2,5 +2,5 @@
 
 Server repo https://github.com/zsobral/dev-graphql
 
-![](https://i.imgur.com/tLesjzF.png)
+![](https://i.imgur.com/RmcR2ej.png)
 
