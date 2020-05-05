@@ -40,9 +40,10 @@ const StyledBrand = styled("a", {
 });
 
 const NewPostButton = () => {
+  const { isAuthenticated } = useAuth();
   const profile = useProfile();
 
-  if (profile.id === null) {
+  if (!profile || !isAuthenticated) {
     return null;
   }
 
@@ -59,9 +60,19 @@ const NewPostButton = () => {
   );
 };
 
+const LoginButton = () => {
+  const { isAuthenticated, login } = useAuth();
+
+  return !isAuthenticated && <Button onClick={login}>Login</Button>;
+};
+
 const UserMenu = () => {
-  const { logout } = useAuth();
+  const { logout, isAuthenticated } = useAuth();
   const profile = useProfile();
+
+  if (isAuthenticated && !profile) {
+    return <Button onClick={logout}>Logout</Button>;
+  }
 
   return (
     <Menu element={<Avatar src={profile?.avatar} />}>
@@ -96,8 +107,6 @@ const UserMenu = () => {
 };
 
 export const Header = () => {
-  const { isAuthenticated, login } = useAuth();
-
   return (
     <StyledHeader>
       <Container>
@@ -108,7 +117,7 @@ export const Header = () => {
           <StyledNavItems>
             <NewPostButton />
             <UserMenu />
-            {!isAuthenticated && <Button onClick={login}>Login</Button>}
+            <LoginButton />
           </StyledNavItems>
         </StyledNav>
       </Container>

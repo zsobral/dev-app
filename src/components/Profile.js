@@ -9,9 +9,9 @@ import { Avatar } from "./Avatar";
 
 const ProfileContext = createContext();
 
-const GET_PROFILE = gql`
+export const GET_PROFILE = gql`
   query {
-    myProfile {
+    me {
       id
       username
       fullName
@@ -30,7 +30,7 @@ export const ProfileProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    const hasProfile = data?.myProfile !== null;
+    const hasProfile = data?.me !== null;
     if (!hasProfile) {
       navigate(createProfilePage);
     }
@@ -41,7 +41,7 @@ export const ProfileProvider = ({ children }) => {
   }
 
   return (
-    <ProfileContext.Provider value={{ ...data?.myProfile }}>
+    <ProfileContext.Provider value={data?.me}>
       {children}
     </ProfileContext.Provider>
   );
@@ -50,7 +50,7 @@ export const ProfileProvider = ({ children }) => {
 export const ProfileCard = () => {
   const profile = useProfile();
 
-  if (!profile.id) {
+  if (!profile) {
     return null;
   }
 

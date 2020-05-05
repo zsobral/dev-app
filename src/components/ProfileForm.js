@@ -1,16 +1,13 @@
 import React, { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 
+import { GET_PROFILE } from "./Profile";
 import { Input } from "./Input";
 import { Button } from "./Button";
 
 const CREATE_PROFILE = gql`
-  mutation($username: String!, $fullName: String, $accountId: ID!) {
-    createProfile(
-      username: $username
-      fullName: $fullName
-      accountId: $accountId
-    ) {
+  mutation($username: String!, $fullName: String) {
+    createProfile(username: $username, fullName: $fullName) {
       id
       avatar
       username
@@ -21,10 +18,17 @@ const CREATE_PROFILE = gql`
 
 const initialValues = { username: "", fullName: "" };
 
-export const ProfileForm = ({ accountId, onSuccess = () => {} }) => {
+export const ProfileForm = ({ onSuccess = () => {} }) => {
   const [state, setState] = useState(initialValues);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [createProfile] = useMutation(CREATE_PROFILE);
+  const [createProfile] = useMutation(CREATE_PROFILE, {
+    update: (cache, { data }) => {
+      cache.writeQuery({
+        query: GET_PROFILE,
+        data: { me: data.createProfile },
+      });
+    },
+  });
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -33,10 +37,8 @@ export const ProfileForm = ({ accountId, onSuccess = () => {} }) => {
       variables: {
         username: state.username,
         fullName: state.fullName,
-        accountId,
       },
     });
-    setIsSubmitting(false);
     onSuccess();
   };
 

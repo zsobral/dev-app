@@ -1,18 +1,23 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
 
-import { GET_POSTS } from "./Posts";
-import { useProfile } from "./Profile";
-import { Button } from "./Button";
 import { styled } from "./Styletron";
+import { GET_POSTS } from "./Posts";
+import { Button } from "./Button";
 import { Markdown } from "./Markdown";
 
 const CREATE_POST = gql`
-  mutation($text: String!, $profileId: ID!) {
-    post: createPost(text: $text, profileId: $profileId) {
+  mutation($text: String!) {
+    post: createPost(text: $text) {
       id
       text
+      createdAt
+      profile {
+        id
+        username
+        fullName
+        avatar
+      }
     }
   }
 `;
@@ -39,9 +44,7 @@ const StyledFormFooter = styled("div", {
   justifyContent: "flex-end",
 });
 
-export const PostForm = () => {
-  const profile = useProfile();
-  const navigate = useNavigate();
+export const PostForm = ({ onSuccess = () => {} }) => {
   const [isPreview, setIsPreview] = useState(false);
   const [values, setValues] = useState(initialValues);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,12 +61,8 @@ export const PostForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsSubmitting(true);
-    await createPost({
-      variables: { text: values.text, profileId: profile.id },
-    });
-    setValues(initialValues);
-    setIsSubmitting(false);
-    navigate("/");
+    await createPost({ variables: { text: values.text } });
+    onSuccess();
   };
 
   const handleChange = (event) => {
