@@ -63,13 +63,8 @@ export const Menu = ({ element, children }) => {
   });
 
   return (
-    <StyledMenuContainer>
-      <StyledButtonDropdown
-        onClick={(event) => {
-          event.stopPropagation();
-          setIsOpen(!isOpen);
-        }}
-      >
+    <StyledMenuContainer onClick={(event) => event.stopPropagation()}>
+      <StyledButtonDropdown onClick={() => setIsOpen(!isOpen)}>
         {element}
       </StyledButtonDropdown>
       {isOpen && <StyledMenuItems>{children({ close })}</StyledMenuItems>}

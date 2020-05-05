@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 
 import { Input } from "./Input";
+import { Button } from "./Button";
 
 const CREATE_PROFILE = gql`
   mutation($username: String!, $fullName: String, $accountId: ID!) {
@@ -20,7 +21,7 @@ const CREATE_PROFILE = gql`
 
 const initialValues = { username: "", fullName: "" };
 
-export const ProfileForm = ({ accountId }) => {
+export const ProfileForm = ({ accountId, onSuccess = () => {} }) => {
   const [state, setState] = useState(initialValues);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createProfile] = useMutation(CREATE_PROFILE);
@@ -36,6 +37,7 @@ export const ProfileForm = ({ accountId }) => {
       },
     });
     setIsSubmitting(false);
+    onSuccess();
   };
 
   const handleChange = (event) => {
@@ -53,15 +55,17 @@ export const ProfileForm = ({ accountId }) => {
         onChange={handleChange}
       />
       <Input
-        label="Nome completo"
+        label="Full name"
         id="fullName"
         name="fullName"
         value={state.fullName}
         onChange={handleChange}
       />
-      <button type="submit" disabled={isSubmitting}>
-        ok
-      </button>
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button type="submit" disabled={isSubmitting}>
+          Continue
+        </Button>
+      </div>
     </form>
   );
 };

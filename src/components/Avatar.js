@@ -1,11 +1,12 @@
 import React from "react";
 import { styled } from "./Styletron";
 
-const StyledContainer = styled("div", () => ({
+const StyledContainer = styled("div", ({ $theme }) => ({
   width: "40px",
   height: "40px",
   borderRadius: "9999px",
   overflow: "hidden",
+  boxShadow: $theme.shadows.avatar,
 }));
 
 const StyledImg = styled("img", () => ({

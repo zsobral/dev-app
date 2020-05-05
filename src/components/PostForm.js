@@ -96,7 +96,7 @@ export const PostForm = () => {
           onClick={() => setIsPreview(!isPreview)}
           style={{ marginRight: "8px" }}
         >
-          Preview
+          {isPreview ? "Edit" : "Preview"}
         </Button>
         <Button type="submit" disabled={isSubmitting}>
           Publish
