@@ -7,16 +7,18 @@ import { Button } from "./Button";
 import { Markdown } from "./Markdown";
 
 const CREATE_POST = gql`
-  mutation($text: String!) {
-    post: createPost(text: $text) {
-      id
-      text
-      createdAt
-      profile {
+  mutation($input: CreatePostInput!) {
+    createPost(input: $input) {
+      post {
         id
-        username
-        fullName
-        avatar
+        text
+        createdAt
+        profile {
+          id
+          username
+          fullName
+          avatar
+        }
       }
     }
   }
@@ -53,7 +55,12 @@ export const PostForm = ({ onSuccess = () => {} }) => {
       const { posts } = cache.readQuery({ query: GET_POSTS });
       cache.writeQuery({
         query: GET_POSTS,
-        data: { posts: [...posts, data.post] },
+        data: {
+          posts: {
+            ...posts,
+            edges: [{ node: data.createPost.post }, ...posts.edges],
+          },
+        },
       });
     },
   });
@@ -61,7 +68,7 @@ export const PostForm = ({ onSuccess = () => {} }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsSubmitting(true);
-    await createPost({ variables: { text: values.text } });
+    await createPost({ variables: { input: { text: values.text } } });
     onSuccess();
   };
 

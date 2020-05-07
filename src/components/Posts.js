@@ -4,25 +4,53 @@ import { gql, useQuery } from "@apollo/client";
 import { Card } from "./Card";
 import { Markdown } from "./Markdown";
 import { Avatar } from "./Avatar";
+import { Button } from "./Button";
 
 export const GET_POSTS = gql`
-  query {
-    posts {
-      id
-      text
-      createdAt
-      profile {
-        id
-        username
-        fullName
-        avatar
+  query GET_POSTS($cursor: String) {
+    posts(first: 15, after: $cursor, orderBy: CREATED_AT_DESC) {
+      edges {
+        node {
+          id
+          text
+          createdAt
+          profile {
+            id
+            username
+            fullName
+            avatar
+          }
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
       }
     }
   }
 `;
 
 export const Posts = () => {
-  const { data, loading, error } = useQuery(GET_POSTS);
+  const { data, loading, error, fetchMore } = useQuery(GET_POSTS);
+
+  const handleLoadMoreClick = () => {
+    fetchMore({
+      variables: { cursor: data?.posts?.pageInfo.endCursor },
+      updateQuery: (previousResult, { fetchMoreResult }) => {
+        const { edges: newEdges, pageInfo } = fetchMoreResult.posts;
+
+        return newEdges.length
+          ? {
+              posts: {
+                __typename: previousResult.posts.__typename,
+                edges: [...previousResult.posts.edges, ...newEdges],
+                pageInfo,
+              },
+            }
+          : previousResult;
+      },
+    });
+  };
 
   if (error) {
     return "error";
@@ -34,7 +62,7 @@ export const Posts = () => {
 
   return (
     <div>
-      {data.posts.map((post) => (
+      {data.posts.edges.map(({ node: post }) => (
         <Card
           $style={({ $theme }) => ({ marginBottom: $theme.sizings.scale2 })}
           key={post.id}
@@ -50,6 +78,8 @@ export const Posts = () => {
                   @{post.profile.username}
                   {" - "}
                   {new Date(post.createdAt).toLocaleDateString()}
+                  {" - "}
+                  {new Date(post.createdAt).toLocaleTimeString()}
                 </small>
               </div>
               <Markdown source={post.text} />
@@ -57,6 +87,11 @@ export const Posts = () => {
           </div>
         </Card>
       ))}
+      {data?.posts?.pageInfo?.hasNextPage && (
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <Button onClick={handleLoadMoreClick}>load more</Button>
+        </div>
+      )}
     </div>
   );
 };

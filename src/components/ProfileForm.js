@@ -6,12 +6,14 @@ import { Input } from "./Input";
 import { Button } from "./Button";
 
 const CREATE_PROFILE = gql`
-  mutation($username: String!, $fullName: String) {
-    createProfile(username: $username, fullName: $fullName) {
-      id
-      avatar
-      username
-      fullName
+  mutation($input: CreateProfileInput!) {
+    createProfile(input: $input) {
+      profile {
+        id
+        avatar
+        username
+        fullName
+      }
     }
   }
 `;
@@ -25,7 +27,7 @@ export const ProfileForm = ({ onSuccess = () => {} }) => {
     update: (cache, { data }) => {
       cache.writeQuery({
         query: GET_PROFILE,
-        data: { me: data.createProfile },
+        data: { me: data.createProfile.profile },
       });
     },
   });
@@ -35,8 +37,10 @@ export const ProfileForm = ({ onSuccess = () => {} }) => {
     setIsSubmitting(true);
     await createProfile({
       variables: {
-        username: state.username,
-        fullName: state.fullName,
+        input: {
+          username: state.username,
+          fullName: state.fullName,
+        },
       },
     });
     onSuccess();
