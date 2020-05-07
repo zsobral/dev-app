@@ -14,6 +14,7 @@ const StyledWrapper = styled("div", ({ $theme }) => ({
 
 const StyledMain = styled("main", ({ $theme }) => ({
   marginTop: $theme.sizings.scale2,
+  marginBottom: $theme.sizings.scale2,
 }));
 
 export const Layout = ({ children }) => {
