@@ -70,6 +70,10 @@ const UserMenu = () => {
   const { logout, isAuthenticated } = useAuth();
   const profile = useProfile();
 
+  if (!isAuthenticated) {
+    return null;
+  }
+
   if (isAuthenticated && !profile) {
     return <Button onClick={logout}>Logout</Button>;
   }
